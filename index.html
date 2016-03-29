@@ -2,12 +2,57 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>D3 Page Template</title>
+        <title>Assignment 2</title>
         <script type="text/javascript" src="d3.js"></script>
     </head>
     <body>
+        <h1>Assignment 2</h1>
+        <h2>Assignment 2A: Simple SVG stuff</h2>
         <script type="text/javascript">
-            d3.select("body").append("p").text("New paragraph!");
-        </script>
+		
+			var dataset = [ 5, 10, 15, 20, 25 ];
+			
+			d3.select("body").selectAll("p")
+				.data(dataset)
+				.enter()
+				.append("p")
+                .style("font-family", "sans-serif")
+                .style("font-size", "24px")
+                .style("font-weight", "bold")
+				.text(function(d) {
+					return "I can count up to " + d;
+				})
+				.style("color", function(d) {
+					if (d > 15) {
+						return "red";
+					} else {
+						return "black";
+					}
+				});
+			
+		</script>
+        <svg width="500" height="150">
+    <rect x="0" y="60" width="80" height="80" fill="purple" stroke = "gray" stroke-width="2"/>
+    <rect x="50" y="45" width="80" height="80" fill="blue" stroke = "gray" stroke-width="2" opacity="0.8"/>
+    <rect x="100" y="30" width="80" height="80" fill="green" stroke = "gray" stroke-width="2" opacity="0.6"/>
+    <rect x="150" y="15" width="80" height="80" fill="yellow" stroke = "gray" stroke-width="2" opacity="0.4"/>
+    <rect x="200" y="0" width="80" height="80" fill="red" stroke = "gray" stroke-width="2" opacity="0.2"/>
+    </svg>
+        
+    <h2>Assignment 2B: One scatter plot and two datasets</h2>
+    <script type="text/javascript">
+        var dataset;
+
+        d3.csv("CrimeData.csv", function(error, data) {
+
+            if (error) {  //If error is not null, something went wrong.
+                console.log(error);  //Log the error.
+            } else {      //The file loaded correctly
+                console.log(data);   //Log the data.
+            dataset = data;
+            }
+
+});
+    </script>
     </body>
 </html>
