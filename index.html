@@ -6,13 +6,16 @@
         <script type="text/javascript" src="d3.js"></script>
     </head>
     <body>
+        <div id="title">
         <h1>Assignment 2</h1>
+        </div>
+        <div id="A">
         <h2>Assignment 2A: Simple SVG stuff</h2>
         <script type="text/javascript">
 		
 			var dataset = [ 5, 10, 15, 20, 25 ];
 			
-			d3.select("body").selectAll("p")
+			d3.select("#A").selectAll("p")
 				.data(dataset)
 				.enter()
 				.append("p")
@@ -37,22 +40,198 @@
     <rect x="100" y="30" width="80" height="80" fill="green" stroke = "gray" stroke-width="2" opacity="0.6"/>
     <rect x="150" y="15" width="80" height="80" fill="yellow" stroke = "gray" stroke-width="2" opacity="0.4"/>
     <rect x="200" y="0" width="80" height="80" fill="red" stroke = "gray" stroke-width="2" opacity="0.2"/>
-    </svg>
-        
+    </svg
+    
+    </div>
+    <div id="B">
     <h2>Assignment 2B: One scatter plot and two datasets</h2>
+    <p id="onPlot">The data from 2003 is visible on the scatter plot</p>
     <script type="text/javascript">
-        var dataset;
 
-        d3.csv("CrimeData.csv", function(error, data) {
+
+     /*   d3.csv("CrimeData.csv", function(error, data) {
 
             if (error) {  //If error is not null, something went wrong.
                 console.log(error);  //Log the error.
             } else {      //The file loaded correctly
-                console.log(data);   //Log the data.
-            dataset = data;
+                dataSet = d3.csv.parseRows(_data);
+                console.log(_data);
+                console.log(scatterdata);
             }
 
-});
+});*/
+        var yScale;
+        var scatterdata;
+        var padding = 20;
+        var svg;
+        d3.text('CrimeData.csv', function(error, _data){
+            if (error) {  //If error is not null, something went wrong.
+                console.log(error);  //Log the error.
+            } 
+            else {      //The file loaded correctly
+                scatterdata = d3.csv.parseRows(_data);
+                console.log(_data);
+                console.log(scatterdata);
+            }
+                var w = 500;
+                var h = 500;
+                var twenty15 = false;
+                
+                var xScale = d3.scale.linear()
+								 .domain([0, d3.max(scatterdata, function(d) { return d[2]; })])
+								 .range([padding*4, 500-padding*4]);
+
+                yScale = d3.scale.linear()
+								 .domain([0, 2319])
+								 .range([500-padding*4,padding*4]);
+                
+                var radScale = d3.scale.linear()
+								 .domain([0, d3.max(scatterdata, function(d) { return d[1]; })])
+								 .range([2, 5]);
+                
+                var xAxis = d3.svg.axis()
+							  .scale(xScale)
+							  .orient("bottom")
+							  .ticks(5);
+
+			     //Define Y axis
+			     var yAxis = d3.svg.axis()
+							  .scale(yScale)
+							  .orient("left")
+							  .ticks(5);
+
+                //Create SVG element
+                svg = d3.select("#B")
+                            .append("svg")
+                            .attr("width", w)
+                            .attr("height", h);
+
+                svg.selectAll("circle")
+                   .data(scatterdata)
+                   .enter()
+                   .append("circle")
+                   .attr("cx", function(d) {
+                        return xScale(d[2]);
+                   })
+                   .attr("cy", function(d) {
+                        return yScale(d[3]);
+                   })
+                   .attr("r", function(d) {
+                        return radScale(d[1]);
+                   });
+
+                svg.selectAll("text")
+                   .data(scatterdata)
+                   .enter()
+                   .append("text")
+                   .text(function(d) {
+                        return d[0];
+                   })
+                   .attr("x", function(d) {
+                        return xScale(d[2]);
+                   })
+                   .attr("y", function(d) {
+                        return yScale(d[3]);
+                   })
+                   .attr("font-family", "sans-serif")
+                   .attr("font-size", "11px")
+                   .attr("fill", "red");
+
+                svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", "translate(0," + (h - padding*4) + ")")
+                        .call(xAxis);
+
+//Create Y axis
+                svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(" + padding*4 + ",0)")
+                    .call(yAxis);
+//On click
+                d3.select("#year")
+                    .on("click", function() {
+                    if(twenty15){
+                        twenty15 = false;
+                    }
+                    else{
+                        twenty15 = true;
+                    }
+                    if(!twenty15){
+                        d3.select("#onPlot").text("The data from 2003 is visible on the scatter plot");
+                        d3.select("#year").text("Click here to see the data from 2015");
+                        
+                        svg.selectAll("circle")
+                            .data(scatterdata)
+                            .transition()
+                            .duration(1500)
+                            .attr("cx", function(d) {
+                                 return xScale(d[2]);
+                            })
+                            .attr("cy", function(d) {
+                                 return yScale(d[3]);
+                            })
+                            .attr("r", function(d) {
+                                 return radScale(d[1]);
+                            });
+
+                        svg.selectAll("text")
+                            .data(scatterdata)
+                            .transition()
+                            .duration(1500)
+                            .text(function(d) {
+                                 return d[0];
+                            })
+                            .attr("x", function(d) {
+                                 return xScale(d[2]);
+                            })
+                            .attr("y", function(d) {
+                                 return yScale(d[3]);
+                            })
+                            .attr("font-family", "sans-serif")
+                            .attr("font-size", "11px")
+                            .attr("fill", "red");
+                    }
+                    if(twenty15){
+                        d3.select("#onPlot").text("The data from 2015 is visible on the scatter plot");
+                        d3.select("#year").text("Click here to see the data from 2003");
+                        svg.selectAll("circle")
+                            .data(scatterdata)
+                            .transition()
+                            .duration(1500)
+                            .attr("cx", function(d) {
+                                 return xScale(d[5]);
+                            })
+                            .attr("cy", function(d) {
+                                 return yScale(d[6]);
+                            })
+                            .attr("r", function(d) {
+                                 return radScale(d[4]);
+                            });
+
+                        svg.selectAll("text")
+                            .data(scatterdata)
+                            .transition()
+                            .duration(1500)
+                            .text(function(d) {
+                                 return d[0];
+                            })
+                            .attr("x", function(d) {
+                                 return xScale(d[5]);
+                            })
+                            .attr("y", function(d) {
+                                 return yScale(d[6]);
+                            })
+                            .attr("font-family", "sans-serif")
+                            .attr("font-size", "11px")
+                            .attr("fill", "red");
+                    }
+                }); 
+        });
     </script>
+        <p id="year">Click here to see the data from 2015</p>
+        </div>
+        <div id="C">
+            <h2>Assignment 2C: One barchart and (at least) two datasets</h2>
+        </div>
     </body>
 </html>
