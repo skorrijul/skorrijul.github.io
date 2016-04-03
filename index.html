@@ -45,6 +45,8 @@
     </div>
     <div id="B">
     <h2>Assignment 2B: One scatter plot and two datasets</h2>
+    <p>Explain in your own words why you think I want the axes to be the same for both years?</p>
+    <p>Keeping the axes unchanged allows the user to see the change between years. If the axes would change the transition would not correspond to the difference in the data.</p>
     <p id="onPlot">The data from 2003 is visible on the scatter plot</p>
     <script type="text/javascript">
 
@@ -296,8 +298,8 @@
 			   		return yScale(d[1]);
 			   })
 			   .attr("fill", function(d) {
-					return "rgb(0,"+ 100+", " + colorScale(d[1]) + ")";
-			   });
+							return "rgb(0, 0, " + (d[1] * 10) + ")";
+				});
 
 			//Create labels
 			svg.selectAll("text")
@@ -391,7 +393,51 @@
             <p id="changeHistogram">Click here to see the data for disorderly conduct crimes!</p>
         </div>
         <div id="D">
-          <h2>Assignment 2D: Visualizing geodata</h2>
+        <h2>Assignment 2D: Visualizing geodata</h2>
+            <p>Why is the size of the file important?</p>
+            <p>If the file is large it would take longer to load the webpage which is tedious for the user. The code is not excecuted until the data is loded so the user wont be able to see the map until the file is loaded.</p>
+        <script type="text/javascript">
+//Width and height
+			var w = 500;
+			var h = 300;
+			//Define map projection
+            
+
+            var lattop = -122.511421514;
+            var lonleft = 37.8199754923;
+            var lonright = 37.7081535998;
+            var width = 500;
+            var height =300;
+            var xym = d3.geo.mercator().scale(40200).translate([86000,28800]);
+            // make the scale so that the difference of longitude is 
+            // exactly the width of the image
+            //var scale = 360*width/(lonright-lonleft);
+            //xym.scale(1000);
+
+            // translate the origin of the map to [0,0] as a start, 
+            // not to the now meaningless default of [480,250]
+           
+
+			//Define path generator
+			var path = d3.geo.path().projection(xym);
+			//Create SVG element
+			var svgg = d3.select("#D")
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height);
+			//Load in GeoJSON data
+			d3.json("sfpddistricts.geojson", function(json) {
+				
+				//Bind data and create one path per GeoJSON feature
+				svgg.selectAll("path")
+				   .data(json.features)
+				   .enter()
+				   .append("path")
+				   .attr("d", path);
+		
+			});
+			
+        </script>
         </div>
     </body>
 </html>
