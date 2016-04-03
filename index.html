@@ -40,7 +40,7 @@
     <rect x="100" y="30" width="80" height="80" fill="green" stroke = "gray" stroke-width="2" opacity="0.6"/>
     <rect x="150" y="15" width="80" height="80" fill="yellow" stroke = "gray" stroke-width="2" opacity="0.4"/>
     <rect x="200" y="0" width="80" height="80" fill="red" stroke = "gray" stroke-width="2" opacity="0.2"/>
-    </svg
+    </svg>
     
     </div>
     <div id="B">
@@ -69,10 +69,11 @@
                 console.log(error);  //Log the error.
             } 
             else {      //The file loaded correctly
-                scatterdata = d3.csv.parseRows(_data);
+                var scatterdata = d3.csv.parseRows(_data);
                 console.log(_data);
                 console.log(scatterdata);
             }
+        
                 var w = 500;
                 var h = 500;
                 var twenty15 = false;
@@ -232,6 +233,165 @@
         </div>
         <div id="C">
             <h2>Assignment 2C: One barchart and (at least) two datasets</h2>
+            <p id="onHistogram">The data prostitution crimes is visible on the histogram.</p>
+            
+        <script type="text/javascript">
+
+			//Width and height
+			var w = 600;
+			var h = 250;
+            var padding = 20;
+            var colorScale;
+            disConduct = false;
+            d3.text('DisorderlyConduct.csv', function(error, _data){
+                if (error) {  //If error is not null, something went wrong.
+                    console.log(error);  //Log the error.
+                } 
+                else {      //The file loaded correctly
+                    disorderlyConductData = d3.csv.parseRows(_data);
+                    console.log(_data);
+                    console.log(dataset);
+                }
+            });
+            d3.text('Prostitution.csv', function(error, _data){
+            if (error) {  //If error is not null, something went wrong.
+                console.log(error);  //Log the error.
+            } 
+            else {      //The file loaded correctly
+                prostitutionData = d3.csv.parseRows(_data);
+                console.log(_data);
+                console.log(dataset);
+            }
+            dataset = prostitutionData;
+			var xScale = d3.scale.ordinal()
+							.domain(d3.range(dataset.length))
+							.rangeRoundBands([padding, w-padding], 0.05);
+
+			var yScale = d3.scale.linear()
+				            .domain([0, 2000])
+							.range([padding, h-padding]);
+            colorScale = d3.scale.linear()
+                            .domain([0,2000])
+                            .range([0,255]);
+			console.log(d3.min(dataset, function(d) { return d[1]; }));
+			//Create SVG element
+			var svg = d3.select("#C")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+
+			//Create bars
+			svg.selectAll("rect")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("x", function(d, i) {
+			   		return xScale(i);
+			   })
+			   .attr("y", function(d) {
+			   		return h-padding - yScale(d[1]);
+			   })
+			   .attr("width", xScale.rangeBand())
+			   .attr("height", function(d) {
+			   		return yScale(d[1]);
+			   })
+			   .attr("fill", function(d) {
+					return "rgb(0,"+ 100+", " + colorScale(d[1]) + ")";
+			   });
+
+			//Create labels
+			svg.selectAll("text")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d[1];
+			   })
+			   .attr("text-anchor", "middle")
+			   .attr("x", function(d, i) {
+			   		return xScale(i) + xScale.rangeBand() / 2;
+			   })
+			   .attr("y", function(d) {
+			   		return h -padding - yScale(d[1]) + 14;
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "white");
+            
+            
+            var x = d3.scale.linear()
+                    .domain([2003, 2015])
+                    .range([0, w-padding*3]);
+                    
+
+            var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom")
+                    .ticks(7)
+                    .tickFormat(d3.format("d"));
+            
+            svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(30," + (h - padding) + ")")
+                    .call(xAxis);
+
+			//On click, update with new data			
+			d3.select("#changeHistogram")
+				.on("click", function() {
+					//Update all rects
+                    if(disConduct){
+                        d3.select("#onHistogram").text("The data for prostitution crimes is visible on the histogram.");
+                        d3.select("#changeHistogram").text("Click here to see the data for disorderly conduct crimes!");
+                        dataset = prostitutionData;
+                        disConduct = false;
+                    }
+                    else{
+                         d3.select("#onHistogram").text("The data for disorderly conduct crimes is visible on the histogram.");
+                        d3.select("#changeHistogram").text("Click here to see the data for prostitution crimes!");
+                        dataset = disorderlyConductData;
+                        disConduct = true;
+                    }
+					svg.selectAll("rect")
+					   .data(dataset)
+					   .transition()
+					   .delay(function(d, i) {
+						   return i / dataset.length * 1000;
+					   })
+					   .duration(500)
+					   .attr("y", function(d) {
+					   		return h - padding- yScale(d[1]);
+					   })
+					   .attr("height", function(d) {
+					   		return yScale(d[1]);
+					   })
+					   .attr("fill", function(d) {
+							return "rgb(0, 0, " + (d[1] * 10) + ")";
+					   });
+
+					//Update all labels
+					svg.selectAll("text")
+					   .data(dataset)
+					   .transition()
+					   .delay(function(d, i) {
+						   return i / dataset.length * 1000;
+					   })
+					   .duration(500)
+					   .text(function(d) {
+					   		return d[1];
+					   })
+					   .attr("x", function(d, i) {
+					   		return xScale(i) + xScale.rangeBand() / 2;
+					   })
+					   .attr("y", function(d) {
+					   		return h - padding - yScale(d[1]) + 14;
+					   });
+                });
+        });
+		</script>
+            <p id="changeHistogram">Click here to see the data for disorderly conduct crimes!</p>
+        </div>
+        <div id="D">
+          <h2>Assignment 2D: Visualizing geodata</h2>
         </div>
     </body>
 </html>
