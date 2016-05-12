@@ -57,20 +57,6 @@
                  var div = d3.select("body").append("div")	
                     .attr("class", "tooltip")				
                     .style("opacity", 0);
-
-                //Define quantize scale to sort data values into buckets of color
-           /*     q0 = "rgb(247,251,255)";
-                q1 = "rgb(222,235,247)";
-                q2 = "rgb(198,219,239)";
-                q3 = "rgb(158,202,225)";
-                q4 = "rgb(107,174,214)";
-                q5 = "rgb(66,146,198)";
-                q6 = "rgb(33,113,181)";
-                q7 = "rgb(8,81,156)";
-                q8 = "rgb(8,48,107)";
-                var color = d3.scale.quantize()
-                                    .range([q0,q1,q2,q3,q4,q5,q6,q7,q8]);*/
-
                 //Create SVG element
                 var svg = d3.select("#C")
                             .append("svg")
@@ -80,7 +66,6 @@
                 //Load in rat inspection result data
                d3.text('ChinesePrediction.csv', function(error, _data){
                    if (error) throw(error);
-                    //Load in GeoJSON data
                    var predictData = d3.csv.parseRows(_data);
                     d3.json("Zipcode_TabulationArea.geojson", function(error,json) {
                     if (error) throw(error);
