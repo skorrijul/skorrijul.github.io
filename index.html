@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Assignment 2</title>
+        <title>Hell's Kitchen</title>
         <script type="text/javascript" src="d3.js"></script>
         <style type="text/css">
 
@@ -33,6 +33,7 @@
     </head>
     <body>
          <div id="C">
+            <h2>Hover the map with the mouse pointer to see the grade a chinese restaurant at that location is most likely to get.</h2>
             <script type="text/javascript">
                 // D3 code will go here
 
@@ -77,48 +78,14 @@
                             .attr("height", h);
 
                 //Load in rat inspection result data
-            /*    d3.csv("zip_ratinspect_result.csv", function(error,data) {
-                    d3.csv("zip_ratinspect_result.csv", function(error,data) {
-                    if (error) throw(error);*/
-/*
-                    //Set input domain for color scale
-                        color.domain([
-                            d3.min(data, function(d) { return d.COUNT; }), 
-                            d3.max(data, function(d) { return d.COUNT; })
-                        ]);
-*/
-
+               d3.text('ChinesePrediction.csv', function(error, _data){
+                   if (error) throw(error);
                     //Load in GeoJSON data
+                   var predictData = d3.csv.parseRows(_data);
                     d3.json("Zipcode_TabulationArea.geojson", function(error,json) {
                     if (error) throw(error);
-
-                    // Merge the rat data and GeoJSON
-                    // Loop through once for each rat data
-                 /*   for (var i = 0; i < data.length; i++) {
-
-                        //Grab ZIP_CODE
-                        var dataZIP = data[i].ZIP_CODE;
-
-                        //Grab data value, and convert from string to float
-                        var dataCOUNT = parseFloat(data[i].COUNT);
-
-                        //Find the corresponding ZIP inside the GeoJSON
-                        for (var j=0; j < json.features.length; j++) {
-
-                            var jsonZIP = json.features[j].properties.postalCode;
-
-                            if (dataZIP == jsonZIP) {
-
-                                //Copy the data value into the JSON
-                                json.features[j].properties.COUNT = dataCOUNT;
-
-                                //Stop looking through the JSON
-                                break;	
-                        }}
-
-                    }*/
-
-                    //Bind data and create one path per GeoJSON feature
+                        console.log(predictData);
+                  
                     svg.selectAll("path")
                        .data(json.features)
                        .enter()
@@ -126,15 +93,20 @@
                        .attr("d", path)
                        .style("fill", "#ccc");
                    
-                    svg.selectAll(".pin").data(json.features)
+                    svg.selectAll(".pin")
+                        .data(predictData)
                         .enter().append("circle", ".pin")
-                        .attr("r", 5)
-                        .attr("transform","translate(" + projection([-73.998485,40.718143])+ ")")
+                        .attr("r", 4)
+                        .attr("transform", function(d,i) {
+                              return "translate(" + projection([
+                                d[0],d[1]
+                              ]) + ")";
+                        })
                         .on("mouseover", function(d,i) {		
                             div.transition()		
                                 .duration(200)		
                                 .style("opacity", .9);		
-                            div.html( "rass"+ "<br/>"  + 69)	
+                            div.html( "<br/>Likely grade:"  + d[2])	
                                 .style("left", (d3.event.pageX) + "px")		
                                 .style("top", (d3.event.pageY - 28) + "px");	
                         })					
@@ -145,7 +117,8 @@
                         })
                         .style("opacity", 0);
                  });
-              //  })});
+              //  })
+               });
 
             </script>	    
         </div>
