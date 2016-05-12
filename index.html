@@ -4,50 +4,30 @@
         <meta charset="utf-8">
         <title>Assignment 2</title>
         <script type="text/javascript" src="d3.js"></script>
+        <style type="text/css">
+
+			text {
+				font-family: sans-serif;
+				font-size: 12px;
+				fill: white;
+			}
+            div.tooltip {	
+                position: absolute;			
+                text-align: center;			
+                width: 80px;					
+                height: 50px;					
+                padding: 2px;				
+                font: 12px sans-serif;		
+                background: lightsteelblue;	
+                border: 0px;		
+                border-radius: 8px;			
+                pointer-events: none;			
+            }
+		</style>
     </head>
     <body>
-        <div id="title">
-        <h1>Assignment 2</h1>
-        </div>
-        <div id="A">
-        <h2>Assignment 2A: Simple SVG stuff</h2>
-        <script type="text/javascript">
-		
-			var dataset = [ 5, 10, 15, 20, 25 ];
-			
-			d3.select("#A").selectAll("p")
-				.data(dataset)
-				.enter()
-				.append("p")
-                .style("font-family", "sans-serif")
-                .style("font-size", "24px")
-                .style("font-weight", "bold")
-				.text(function(d) {
-					return "I can count up to " + d;
-				})
-				.style("color", function(d) {
-					if (d > 15) {
-						return "red";
-					} else {
-						return "black";
-					}
-				});
-			
-		</script>
-        <svg width="500" height="150">
-    <rect x="0" y="60" width="80" height="80" fill="purple" stroke = "gray" stroke-width="2"/>
-    <rect x="50" y="45" width="80" height="80" fill="blue" stroke = "gray" stroke-width="2" opacity="0.8"/>
-    <rect x="100" y="30" width="80" height="80" fill="green" stroke = "gray" stroke-width="2" opacity="0.6"/>
-    <rect x="150" y="15" width="80" height="80" fill="yellow" stroke = "gray" stroke-width="2" opacity="0.4"/>
-    <rect x="200" y="0" width="80" height="80" fill="red" stroke = "gray" stroke-width="2" opacity="0.2"/>
-    </svg>
-    
-    </div>
-    <div id="B">
-    <h2>Assignment 2B: One scatter plot and two datasets</h2>
-    <p>Explain in your own words why you think I want the axes to be the same for both years?</p>
-    <p>Keeping the axes unchanged allows the user to see the change between years. If the axes would change the transition would not correspond to the difference in the data.</p>
-    <p id="onPlot">The data from 2003 is visible on the scatter plot</p>
+        <div id="E">
+    <h2>Average score as a function of the ratio between active rat signs and the total number of inspections in each zip code</h2>
     <script type="text/javascript">
 
 
@@ -66,14 +46,12 @@
         var scatterdata;
         var padding = 20;
         var svg;
-        d3.text('CrimeData.csv', function(error, _data){
+        d3.text('scoreVSrat.csv', function(error, _data){
             if (error) {  //If error is not null, something went wrong.
                 console.log(error);  //Log the error.
             } 
             else {      //The file loaded correctly
                 var scatterdata = d3.csv.parseRows(_data);
-                console.log(_data);
-                console.log(scatterdata);
             }
         
                 var w = 500;
@@ -81,11 +59,11 @@
                 var twenty15 = false;
                 
                 var xScale = d3.scale.linear()
-								 .domain([0, d3.max(scatterdata, function(d) { return d[2]; })])
+								 .domain([10, 20])
 								 .range([padding*4, 500-padding*4]);
 
                 yScale = d3.scale.linear()
-								 .domain([0, 2319])
+								 .domain([0, 1])
 								 .range([500-padding*4,padding*4]);
                 
                 var radScale = d3.scale.linear()
@@ -104,7 +82,139 @@
 							  .ticks(5);
 
                 //Create SVG element
-                svg = d3.select("#B")
+                svg = d3.select("#E")
+                            .append("svg")
+                            .attr("width", w)
+                            .attr("height", h);
+                var tooltip = d3.select("#E").append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+            
+                svg.selectAll("circle")
+                   .data(scatterdata)
+                   .enter()
+                   .append("circle")
+                   .attr("cx", function(d) {
+                        return xScale(d[1]);
+                   })
+                   .attr("cy", function(d) {
+                        return yScale(d[3]);
+                   })
+                   .attr("r", function(d) {
+                        return 3;
+                   })
+                   .on("mouseover", function(d) {
+                        tooltip.transition()
+                        .durat1ion(200)
+                        .style("opacity", .9);
+                        tooltip.html(d[0] + "<br/> (" + d[1] + ", " + d[3] + ")")
+                        .style("left", (d3.event.pageX + 5) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", function(d) {
+                        tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    });
+            
+                
+              /*  svg.selectAll("text")
+                   .data(scatterdata)
+                   .enter()
+                   .append("text")
+                   .text(function(d) {
+                        return d[0];
+                   })
+                   .attr("x", function(d) {
+                        return xScale(d[1]);
+                   })
+                   .attr("y", function(d) {
+                        return yScale(d[3]);
+                   })
+                   .attr("font-family", "sans-serif")
+                   .attr("font-size", "11px")
+                   .attr("fill", "red");*/
+
+                svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", "translate(0," + (h - padding*4) + ")")
+                        .call(xAxis);
+                svg.append("text")      // text label for the x axis
+                        .attr("x", 265 )
+                        .attr("y",  h-30 )
+                        .style("text-anchor", "middle")
+                        .text("Average grade");
+
+//Create Y axis
+                svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(" + padding*4 + ",0)")
+                    .call(yAxis);
+                svg.append("text")
+                    .attr("text-anchor", "middle")  
+                    .attr("transform", "translate("+ (padding) +","+(h/2)+")rotate(-90)")  
+                    .text("active rat signs/total inspections");
+                    });
+               
+    </script>
+        </div>
+        <div id="F">
+    <h2>Average score as a function of the number of active ratsigns in each zip code</h2>
+    <script type="text/javascript">
+
+
+     /*   d3.csv("CrimeData.csv", function(error, data) {
+
+            if (error) {  //If error is not null, something went wrong.
+                console.log(error);  //Log the error.
+            } else {      //The file loaded correctly
+                dataSet = d3.csv.parseRows(_data);
+                console.log(_data);
+                console.log(scatterdata);
+            }
+
+});*/
+        var yScale;
+        var scatterdata;
+        var padding = 20;
+        var svg;
+        d3.text('scoreVSrat.csv', function(error, _data){
+            if (error) {  //If error is not null, something went wrong.
+                console.log(error);  //Log the error.
+            } 
+            else {      //The file loaded correctly
+                var scatterdata = d3.csv.parseRows(_data);
+            }
+        
+                var w = 500;
+                var h = 500;
+                var twenty15 = false;
+                
+                var xScale = d3.scale.linear()
+								 .domain([10, 20])
+								 .range([padding*4, 500-padding*4]);
+
+                yScale = d3.scale.linear()
+								 .domain([0, 5000])
+								 .range([500-padding*4,padding*4]);
+                
+                var radScale = d3.scale.linear()
+								 .domain([0, d3.max(scatterdata, function(d) { return d[1]; })])
+								 .range([2, 5]);
+                
+                var xAxis = d3.svg.axis()
+							  .scale(xScale)
+							  .orient("bottom")
+							  .ticks(5);
+
+			     //Define Y axis
+			     var yAxis = d3.svg.axis()
+							  .scale(yScale)
+							  .orient("left")
+							  .ticks(5);
+
+                //Create SVG element
+                svg = d3.select("#F")
                             .append("svg")
                             .attr("width", w)
                             .attr("height", h);
@@ -114,16 +224,16 @@
                    .enter()
                    .append("circle")
                    .attr("cx", function(d) {
-                        return xScale(d[2]);
+                        return xScale(d[1]);
                    })
                    .attr("cy", function(d) {
-                        return yScale(d[3]);
+                        return yScale(d[2]);
                    })
                    .attr("r", function(d) {
-                        return radScale(d[1]);
+                        return 3;
                    });
 
-                svg.selectAll("text")
+              /*  svg.selectAll("text")
                    .data(scatterdata)
                    .enter()
                    .append("text")
@@ -131,313 +241,124 @@
                         return d[0];
                    })
                    .attr("x", function(d) {
-                        return xScale(d[2]);
+                        return xScale(d[1]);
                    })
                    .attr("y", function(d) {
                         return yScale(d[3]);
                    })
                    .attr("font-family", "sans-serif")
                    .attr("font-size", "11px")
-                   .attr("fill", "red");
+                   .attr("fill", "red");*/
 
                 svg.append("g")
                         .attr("class", "axis")
                         .attr("transform", "translate(0," + (h - padding*4) + ")")
                         .call(xAxis);
-
+                svg.append("text")      // text label for the x axis
+                    .attr("x", 265 )
+                    .attr("y",  h-30 )
+                    .style("text-anchor", "middle")
+                    .text("Average grade");
 //Create Y axis
                 svg.append("g")
                     .attr("class", "axis")
                     .attr("transform", "translate(" + padding*4 + ",0)")
                     .call(yAxis);
-//On click
-                d3.select("#year")
-                    .on("click", function() {
-                    if(twenty15){
-                        twenty15 = false;
-                    }
-                    else{
-                        twenty15 = true;
-                    }
-                    if(!twenty15){
-                        d3.select("#onPlot").text("The data from 2003 is visible on the scatter plot");
-                        d3.select("#year").text("Click here to see the data from 2015");
-                        
-                        svg.selectAll("circle")
-                            .data(scatterdata)
-                            .transition()
-                            .duration(1500)
-                            .attr("cx", function(d) {
-                                 return xScale(d[2]);
-                            })
-                            .attr("cy", function(d) {
-                                 return yScale(d[3]);
-                            })
-                            .attr("r", function(d) {
-                                 return radScale(d[1]);
-                            });
-
-                        svg.selectAll("text")
-                            .data(scatterdata)
-                            .transition()
-                            .duration(1500)
-                            .text(function(d) {
-                                 return d[0];
-                            })
-                            .attr("x", function(d) {
-                                 return xScale(d[2]);
-                            })
-                            .attr("y", function(d) {
-                                 return yScale(d[3]);
-                            })
-                            .attr("font-family", "sans-serif")
-                            .attr("font-size", "11px")
-                            .attr("fill", "red");
-                    }
-                    if(twenty15){
-                        d3.select("#onPlot").text("The data from 2015 is visible on the scatter plot");
-                        d3.select("#year").text("Click here to see the data from 2003");
-                        svg.selectAll("circle")
-                            .data(scatterdata)
-                            .transition()
-                            .duration(1500)
-                            .attr("cx", function(d) {
-                                 return xScale(d[5]);
-                            })
-                            .attr("cy", function(d) {
-                                 return yScale(d[6]);
-                            })
-                            .attr("r", function(d) {
-                                 return radScale(d[4]);
-                            });
-
-                        svg.selectAll("text")
-                            .data(scatterdata)
-                            .transition()
-                            .duration(1500)
-                            .text(function(d) {
-                                 return d[0];
-                            })
-                            .attr("x", function(d) {
-                                 return xScale(d[5]);
-                            })
-                            .attr("y", function(d) {
-                                 return yScale(d[6]);
-                            })
-                            .attr("font-family", "sans-serif")
-                            .attr("font-size", "11px")
-                            .attr("fill", "red");
-                    }
-                }); 
-        });
+            
+                svg.append("text")
+                    .attr("text-anchor", "middle")  
+                    .attr("transform", "translate("+ (padding) +","+(h/2)+")rotate(-90)")  
+                    .text("Active rat signs");
+                    });
     </script>
-        <p id="year">Click here to see the data from 2015</p>
         </div>
-        <div id="C">
-            <h2>Assignment 2C: One barchart and (at least) two datasets</h2>
-            <p id="onHistogram">The data prostitution crimes is visible on the histogram.</p>
-            
-        <script type="text/javascript">
+        <div id="B">
+            <h2>Number of restaurants of each cuisine</h2>
+            <script type="text/javascript">
 
-			//Width and height
-			var w = 600;
-			var h = 250;
-            var padding = 20;
-            var colorScale;
-            disConduct = false;
-            d3.text('DisorderlyConduct.csv', function(error, _data){
-                if (error) {  //If error is not null, something went wrong.
-                    console.log(error);  //Log the error.
-                } 
-                else {      //The file loaded correctly
-                    disorderlyConductData = d3.csv.parseRows(_data);
-                    console.log(_data);
-                    console.log(dataset);
-                }
-            });
-            d3.text('Prostitution.csv', function(error, _data){
-            if (error) {  //If error is not null, something went wrong.
-                console.log(error);  //Log the error.
-            } 
-            else {      //The file loaded correctly
-                prostitutionData = d3.csv.parseRows(_data);
-                console.log(_data);
-                console.log(dataset);
-            }
-            dataset = prostitutionData;
-			var xScale = d3.scale.ordinal()
-							.domain(d3.range(dataset.length))
-							.rangeRoundBands([padding, w-padding], 0.05);
-
-			var yScale = d3.scale.linear()
-				            .domain([0, 2000])
-							.range([padding, h-padding]);
-            colorScale = d3.scale.linear()
-                            .domain([0,2000])
-                            .range([0,255]);
-			console.log(d3.min(dataset, function(d) { return d[1]; }));
-			//Create SVG element
-			var svg = d3.select("#C")
-						.append("svg")
-						.attr("width", w)
-						.attr("height", h);
-
-			//Create bars
-			svg.selectAll("rect")
-			   .data(dataset)
-			   .enter()
-			   .append("rect")
-			   .attr("x", function(d, i) {
-			   		return xScale(i);
-			   })
-			   .attr("y", function(d) {
-			   		return h-padding - yScale(d[1]);
-			   })
-			   .attr("width", xScale.rangeBand())
-			   .attr("height", function(d) {
-			   		return yScale(d[1]);
-			   })
-			   .attr("fill", function(d) {
-							return "rgb(0, 0, " + (d[1] * 10) + ")";
-				});
-
-			//Create labels
-			svg.selectAll("text")
-			   .data(dataset)
-			   .enter()
-			   .append("text")
-			   .text(function(d) {
-			   		return d[1];
-			   })
-			   .attr("text-anchor", "middle")
-			   .attr("x", function(d, i) {
-			   		return xScale(i) + xScale.rangeBand() / 2;
-			   })
-			   .attr("y", function(d) {
-			   		return h -padding - yScale(d[1]) + 14;
-			   })
-			   .attr("font-family", "sans-serif")
-			   .attr("font-size", "11px")
-			   .attr("fill", "white");
-            
-            
-            var x = d3.scale.linear()
-                    .domain([2003, 2015])
-                    .range([0, w-padding*3]);
-                    
-
-            var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .orient("bottom")
-                    .ticks(7)
-                    .tickFormat(d3.format("d"));
-            
-            svg.append("g")
-                    .attr("class", "axis")
-                    .attr("transform", "translate(30," + (h - padding) + ")")
-                    .call(xAxis);
-
-			//On click, update with new data			
-			d3.select("#changeHistogram")
-				.on("click", function() {
-					//Update all rects
-                    if(disConduct){
-                        d3.select("#onHistogram").text("The data for prostitution crimes is visible on the histogram.");
-                        d3.select("#changeHistogram").text("Click here to see the data for disorderly conduct crimes!");
-                        dataset = prostitutionData;
-                        disConduct = false;
+                d3.text('NumberOfCuisines2.csv', function(error, _data){
+                    if (error) {  //If error is not null, something went wrong.
+                        console.log(error);  //Log the error.
+                    } 
+                    else {      //The file loaded correctly
+                        var CuisineData = d3.csv.parseRows(_data);
                     }
-                    else{
-                         d3.select("#onHistogram").text("The data for disorderly conduct crimes is visible on the histogram.");
-                        d3.select("#changeHistogram").text("Click here to see the data for prostitution crimes!");
-                        dataset = disorderlyConductData;
-                        disConduct = true;
-                    }
-					svg.selectAll("rect")
-					   .data(dataset)
-					   .transition()
-					   .delay(function(d, i) {
-						   return i / dataset.length * 1000;
-					   })
-					   .duration(500)
-					   .attr("y", function(d) {
-					   		return h - padding- yScale(d[1]);
-					   })
-					   .attr("height", function(d) {
-					   		return yScale(d[1]);
-					   })
-					   .attr("fill", function(d) {
-							return "rgb(0, 0, " + (d[1] * 10) + ")";
-					   });
+                var values = [];
+                var labels = [];
+                var dataset = Data();
+                console.log(values);
+                //Width and height
+                var w = 600;
+                var h = 600;
 
-					//Update all labels
-					svg.selectAll("text")
-					   .data(dataset)
-					   .transition()
-					   .delay(function(d, i) {
-						   return i / dataset.length * 1000;
-					   })
-					   .duration(500)
-					   .text(function(d) {
-					   		return d[1];
-					   })
-					   .attr("x", function(d, i) {
-					   		return xScale(i) + xScale.rangeBand() / 2;
-					   })
-					   .attr("y", function(d) {
-					   		return h - padding - yScale(d[1]) + 14;
-					   });
+                var outerRadius = w / 2;
+                var innerRadius = w / 3;
+                var arc = d3.svg.arc()
+                                .innerRadius(innerRadius)
+                                .outerRadius(outerRadius);
+
+                var pie = d3.layout.pie();
+
+                //Easy colors accessible via a 10-step ordinal scale
+                var color = d3.scale.ordinal()
+	                   .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84])
+	                   .range(["#CF8F95", "#6843C5", "#B55A23", "#F7FB9B", "#0C4880", "#D4F649", "#BA10DE", "#694B46", "#F3EEF7", "#AF4F7C", "#F51EB5", "#77F98C", "#7E6CAA", "#29E07D", "#82CC14", "#809AF5", "#F7DE05", "#B8314E", "#C77A7F", "#7F14C3", "#9542F3", "#8EA6DB", "#B84FA9", "#D60407", "#4876C3",
+"#969D98", "#116C74", "#83CC26", "#50D55D", "#D965F3", "#899172", "#A8415B", "#5DF1A2", "#802567", "#331991", "#C2A532", "#8EBCF0", "#85E779", "#909C5F", "#49353C", "#7FE152", "#4E1FA1", "#026EAD", "#73D103", "#14D590", "#200126", "#47456F", "#661D5B", "#ADF8FF", "#C0395D",
+"#A7EA81", "#1C852F", "#58666C", "#209299", "#1695FF", "#2A7150", "#36DBCF", "#B1818E", "#DAF7C9", "#0EF93E", "#96908E", "#0B5D72", "#D2353C", "#416383", "#C82B25", "#ABC4B4", "#2C08A7", "#A79DDD", "#91E056", "#42E6D1", "#C8C9C8", "#EF5E7F", "#517FF4", "#C95AAB", "#0EDF5B",
+"#023DB0", "#6A0B87", "#BE92D8", "#691C4C", "#85A540", "#05243E", "#498450", "#C1F53C", "#EA607B"]);
+
+                //Create SVG element
+                var svg = d3.select("#B")
+                            .append("svg")
+                            .attr("width", w)
+                            .attr("height", h);
+
+                //Set up groups
+                var arcs = svg.selectAll("g.arc")
+                              .data(pie(values))
+                              .enter()
+                              .append("g")
+                              .attr("class", "arc")
+                              .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+
+                //Draw arc paths
+                var div = d3.select("body").append("div")	
+                    .attr("class", "tooltip")				
+                    .style("opacity", 0);
+
+                arcs.append("path")
+                    .attr("fill", function(d, i) {
+                        return color(i);
+                    })
+                    .attr("d", arc)
+                    .on("mouseover", function(d,i) {		
+                        div.transition()		
+                            .duration(200)		
+                            .style("opacity", .9);		
+                        div.html( labels[i]+ "<br/>"  + values[i])	
+                            .style("left", (d3.event.pageX) + "px")		
+                            .style("top", (d3.event.pageY - 28) + "px");	
+                    })					
+                    .on("mouseout", function(d) {		
+                        div.transition()		
+                            .duration(500)		
+                            .style("opacity", 0);	
+                    });
+					
+                function Data (){
+                    var list = []
+
+                    for (i = 0; i < 84; i++) {
+                        list.push({label:CuisineData[i][0],value:parseFloat(CuisineData[i][2])});
+                        values.push(parseFloat(CuisineData[i][1]));
+                        labels.push(CuisineData[i][0]);
+                    }
+                    console.log(list);
+                    return list;
+                    } 
                 });
-        });
-		</script>
-            <p id="changeHistogram">Click here to see the data for disorderly conduct crimes!</p>
-        </div>
-        <div id="D">
-        <h2>Assignment 2D: Visualizing geodata</h2>
-            <p>Why is the size of the file important?</p>
-            <p>If the file is large it would take longer to load the webpage which is tedious for the user. The code is not excecuted until the data is loded so the user wont be able to see the map until the file is loaded.</p>
-        <script type="text/javascript">
-//Width and height
-			var w = 500;
-			var h = 300;
-			//Define map projection
-            
 
-            var lattop = -122.511421514;
-            var lonleft = 37.8199754923;
-            var lonright = 37.7081535998;
-            var width = 500;
-            var height =300;
-            var xym = d3.geo.mercator().scale(40200).translate([86000,28800]);
-            // make the scale so that the difference of longitude is 
-            // exactly the width of the image
-            //var scale = 360*width/(lonright-lonleft);
-            //xym.scale(1000);
-
-            // translate the origin of the map to [0,0] as a start, 
-            // not to the now meaningless default of [480,250]
-           
-
-			//Define path generator
-			var path = d3.geo.path().projection(xym);
-			//Create SVG element
-			var svgg = d3.select("#D")
-						.append("svg")
-						.attr("width", width)
-						.attr("height", height);
-			//Load in GeoJSON data
-			d3.json("sfpddistricts.geojson", function(json) {
-				
-				//Bind data and create one path per GeoJSON feature
-				svgg.selectAll("path")
-				   .data(json.features)
-				   .enter()
-				   .append("path")
-				   .attr("d", path);
-		
-			});
-			
-        </script>
+            </script>
         </div>
     </body>
 </html>
