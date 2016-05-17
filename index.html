@@ -85,20 +85,23 @@
         #Table{
             padding-left:15%;
             padding-right:15%;
-        }    
+        }
+        h3{
+            padding-left: 5%;
+        }
 		</style>
     </head>
     <body>
         <h1>New York City's dirtiest restaurants</h1>
         <div id="motivation">
-            <h2>Motivation</h2>
+            <h2>Introduction</h2>
             <p>
-                In this project, we hope to find the correlation between sanitary condition of a restaurant in New York City and its environment. Based on restaurant inspections and rodent inspections, which represent the sanitary condition of the surrounding area , we hope we can find a correlation between these two datasets. Then, we could perform machine learning algorithm to predict the sanitary condition of a restaurant or environment when either dataset is missing. Thus, we are able inform customer about the sanitary condition of a restaurant even when the sanitary information of a restaurant is unknown.
+                In this project, we hope to find the correlation between sanitary condition of a restaurant in New York City and its environment. Based on restaurant inspections and rodent inspections, which represent the sanitary condition of the surrounding area. Then, we could perform machine learning algorithm to predict the sanitary condition of a restaurant or environment when either dataset is missing. However, the invetigation showed no correlation between the rodent inspection dataset and restaurant dataset. We, then, expect to based on the sanitary dataset of restaurants to build model that predict the sanitary condition of a restaurant which not included in the dataset.
 
                 </p>
             </div>
         <div id="introduction">
-            <h2>Introduction of data sets</h2>
+            <h3>Introduction of datasets</h3>
             <p>We aquired the two following data sets:</p>
             <ul>
               <li>Restaurant Inspection</li>          
@@ -450,7 +453,7 @@ Conducted by Department of Health and Mental Hygiene, and the earliest data can 
         </div>
     <div id="AVPVbarchart">
         <h2>AVPV barchart</h2>
-        <p>
+        <p style="padding-bottom:0;">
         Average violation per visit (AVPV): summing up total violations of restaurants in same type of cuisine and divide by the total number of inspection visit.
 In this barchart, we show difference of each cuisine comparing to the mean of AVPV. 
 Observed the top 20% cuisine (the first 17 cuisines) that has the most AVPV, Chinese relevant cuisine re-appear for 5 times, it draws our attention that Chinese restaurant tend to have larger probability to be bad sanitary conditions. In machine learning section, we are interested to predict the sanitary indices which are AVPV and grade.
@@ -461,8 +464,8 @@ Observed the top 20% cuisine (the first 17 cuisines) that has the most AVPV, Chi
 
         //************************GLOBAL VARIABLE*************************
         // Width and height
-        var w = 800;
-        var h = 600;
+        var w = 1200;
+        var h = 800;
         var leftmargin = 10
         var rightmargin = 10
 
@@ -845,6 +848,7 @@ The region with the most violation is at the south of Brox, and north of Queens 
         </div>
         <div id="CorrelationScoreVSRatRatio">
     <h2>Average score as a function of the ratio between active rat signs and the total number of inspections in each zip code</h2>
+            <p>We tried to find a correlation between active rat signs and the average score in each zip code. The y-axis represent the ratio of active rat sign to total number of inspection, and the x-axis is the average score of corresponding zip code. The distribution of xy shows no correlation between these two parameters, and thus they are uncorrelated. </p>
     <script type="text/javascript">
 
 
