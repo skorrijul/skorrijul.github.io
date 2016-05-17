@@ -5,11 +5,10 @@
         <title>Hell's Kitchen</title>
         <script type="text/javascript" src="d3.js"></script>
         <style type="text/css">
-
-			text {
-				font-family: sans-serif;
-				font-size: 10px;
-				fill: black;
+            
+			*{
+				color: #333333; 
+                font-family: "Helvetica Neue",Arial,sans-serif;
 			}
             div.tooltip {	
                 position: absolute;			
@@ -74,69 +73,128 @@
               line-height: 1.5625; 
               margin-bottom: 15px;
               padding-left: 5%;
-              padding-right:5%;}
+              padding-right:5%;
+          }
           h2{
                 padding-left: 3%;
-          
           }
-                
+        li{
+            font-weight: bold;
+            margin-left:6%;
+        }
+        #Table{
+            padding-left:15%;
+            padding-right:15%;
+        }    
 		</style>
     </head>
     <body>
+        <h1>New York City's dirtiest restaurants</h1>
+        <div id="motivation">
+            <h2>Motivation</h2>
+            <p>
+                In this project, we hope to find the correlation between sanitary condition of a restaurant in New York City and its environment. Based on restaurant inspections and rodent inspections, which represent the sanitary condition of the surrounding area , we hope we can find a correlation between these two datasets. Then, we could perform machine learning algorithm to predict the sanitary condition of a restaurant or environment when either dataset is missing. Thus, we are able inform customer about the sanitary condition of a restaurant even when the sanitary information of a restaurant is unknown.
+
+                </p>
+            </div>
+        <div id="introduction">
+            <h2>Introduction of data sets</h2>
+            <p>We aquired the two following data sets:</p>
+            <ul>
+              <li>Restaurant Inspection</li>          
+            <p>
+
+               In July 2010, the Health Department began requiring restaurants in all five boroughs (Manhattan, Bronx, Brooklyn, Queens and Staten Islands) to post letter grades summarizing their sanitary inspection score. <br/>
+                The purposes of the score is to inform the public about a restaurant’s sanitary condition; to improve the sanitary condition and food safety in restaurants.
+        <br/>
+                The data set contains information about the Health Department's inspections of New York's 24.000 restaurants. Some of the most important variables are: Name, Score, Grade, Violation Description and Address.
+                </p>
+                <li>Rodent Inspection</li>          
+            <p>
+Conducted by Department of Health and Mental Hygiene, and the earliest data can back to 2009.
+
+                </p>
+        
+        </ul>
+        
+        
+        </div>
+         <div id="RestaurantInspectionExplained">
+            <h2>How the restaurant inspections work</h2>
+             <img src="Grades.png" alt="Mountain View" style="padding-left:5%;">
+            <p>
+               The restaurant being inspected gets a score corresponding to the violations registerd during the inspection. Violations are classified as "critical" or "general". As explained in the image above critical violations carry more points. Critical violations are more likely than general ones to contribute to food-borne illnesses. There are some critical violations that are thought to pose an immediate health threat. These critical violations carry the most points and are further classified as "public health hazards". If a restaurant does not correct a public health hazard the Health Department may close the restaurant immediately. Finally the sum of the points carried by the violations results in a grade. The restaurant gets an A if the final score is from 0 to 13, a B if the score is from 14 to 27 and a C if the score is higher than 27. In the table below the ten most common violations can be viewed. The table also shows the type of the violations and how often each violation was recorded from 2013-2016.
+
+                </p>
+            </div>
                 <div id="Table">
+                
           <table id="Violations">
   <tr>
     <th>Violation</th>
     <th>Count</th>
+    <th>Type</th>
   </tr>
   <tr>
     <td>Facility not vermin proof. Harborage or conditions conducive to attracting vermin to the premises and/or allowing vermin to exist.</td>
 
 <td>42337</td>
+<td>General</td>
+      
   </tr>
   <tr>
-<td>Cold food item held above 41Âº F (smoked fish and reduced oxygen packaged foods above 38ºF) except during necessary preparation.</td>
+<td>Cold food item held above 41º F (smoked fish and reduced oxygen packaged foods above 38ºF) except during necessary preparation.</td>
 
 <td>35096</td>
+ <td>Public health hazard</td>
   </tr>
   <tr>
     
 <td>Evidence of mice or live mice present in facility's food and/or non-food areas.</td>
 
 <td>31491</td>
+      <td>Critical</td>
   </tr>
   <tr>
 <td>Food contact surface not properly washed, rinsed and sanitized after each use and following any activity when contamination may have occurred.</td>
 
 <td>27330</td>
+      <td>Critical</td>
   </tr>
   <tr>
 <td>Food not protected from potential source of contamination during storage, preparation, transportation, display or service.</td>
 
 <td>24949</td>
+      <td>Critical</td>
   </tr>
-  <tr><td>Plumbing not properly installed or maintained; anti-siphonage or backflow prevention device not provided where required; equipment or floor not properly drained; sewage disposal system in disrepair or not functioning properly.</td>
+      <tr><td>Plumbing not properly installed or maintained; anti-siphonage or backflow prevention device not provided where required; equipment or floor not properly drained; sewage disposal system in disrepair or not functioning properly.</td>
 
-<td>23847</td>
+    <td>23847</td>
+      <td>General</td>
   </tr>
   <tr>
 <td>Hot food item not held at or above 140ºF</td> <td>21455</td>
+      <td>Public health hazard</td>
   </tr>
   <tr>
     
 <td>Filth flies or food/refuse/sewage-associated (FRSA) flies present in facilitys food and/or non-food areas. Filth flies include house flies, little house flies, blow flies, bottle flies and flesh flies. Food/refuse/sewage-associated flies include fruit flies, drain flies and Phorid flies.</td>
 
-<td>18997</td>  </tr>
+<td>18997</td>
+    <td>Critical</td>         
+</tr>
   <tr>
 <td>Raw, cooked or prepared food is adulterated, contaminated, cross-contaminated, or not discarded in accordance with HACCP plan.</td>
 
 <td>11192</td>
+      <td>Public health hazard</td>
   </tr>
   <tr>
 
 <td>Live roaches present in facility's food and/or non-food areas.</td>
 
 <td>10969</td>
+<td>Critical</td>
   </tr>
   <tr>
 <!--
@@ -211,14 +269,15 @@
                 var dataset = Data();
                 console.log(values);
                 //Width and height
-                var w = 600;
-                var h = 600;
+                var w = 700;
+                var h = 700;
 
                 var outerRadius = w / 2;
                 var innerRadius = w / 3;
+                var padding = 30;
                 var arc = d3.svg.arc()
-                                .innerRadius(innerRadius)
-                                .outerRadius(outerRadius);
+                                .innerRadius(innerRadius-padding)
+                                .outerRadius(outerRadius-padding);
 
                 var pie = d3.layout.pie();
 
@@ -277,6 +336,14 @@
                     console.log(list);
                     return list;
                     } 
+                    svg.append("text")
+                    .attr("x", (w / 2))             
+                    .attr("y", 20)
+                    .attr("text-anchor", "middle")  
+                    .style("font-size", "16px") 
+                    .style("text-decoration", "underline") 
+                    .style("font-weight", "bold") 
+                    .text("Cuisines with more than a hundred restaurants");
                 });
 
             </script>
@@ -375,7 +442,7 @@
                     .attr("text-anchor", "middle")  
                     .style("font-size", "16px") 
                     .style("text-decoration", "underline") 
-                    .style("font", "bold") 
+                    .style("font-weight", "bold") 
                     .text("Cuisines with less than a hundred restaurants");
                 });
                 
@@ -383,6 +450,13 @@
         </div>
     <div id="AVPVbarchart">
         <h2>AVPV barchart</h2>
+        <p>
+        Average violation per visit (AVPV): summing up total violations of restaurants in same type of cuisine and divide by the total number of inspection visit.
+In this barchart, we show difference of each cuisine comparing to the mean of AVPV. 
+Observed the top 20% cuisine (the first 17 cuisines) that has the most AVPV, Chinese relevant cuisine re-appear for 5 times, it draws our attention that Chinese restaurant tend to have larger probability to be bad sanitary conditions. In machine learning section, we are interested to predict the sanitary indices which are AVPV and grade.
+        
+        </p>
+        
      <script type="text/javascript">
 
         //************************GLOBAL VARIABLE*************************
@@ -506,6 +580,14 @@
     </div>
          <div id="KNNChinese">
             <h2>Hover the map with the mouse pointer to see the grade a Chinese restaurant at that location is most likely to get.</h2>
+             <p>Imagine you have just moved to New York City. To make a living you decide to open a Chinese restaurant but where in the big apple is the best place to do that? Of course there are many different things to take in to account when finding the perfect location for your restaurant. One important thing is how likely it is that your restaurant gets a good grade from the Health Department in the future. This can be determined by looking at what grade restaurants in the neighborhood have gotten in the past.</p>
+             <br/>
+             <p>There are 2312 Chinese restaurants in NYC. We classify each restaurant according to the worst grade it has received since 2013. We take the worst grade because restaurants are given multiple opportunities to improve their grades and most of them eventually receive an A. Thus restaurants that have always been kept clean get classified as the best ones and the other ones have at some point failed to meet the requirements. Now we lay a grid of points over New York City. For each point <em>P</em> on the grid we look at the 10 restaurants that are closest to it. <em>P</em> gets classified in accordance to the class of the majority of its 10 nearest neighbors.</p>
+             <br/>
+             <p>
+                The dots on the map below represent the grade a Chinese restaurant is likely to get in that location. Green represents a grade A, yellow is for a grade B and red is for C. By hovering the mouse pointer over the map the grade of the corresponding dot can be viewed.
+             
+             </p>
             <script type="text/javascript">
                 // D3 code will go here
 
@@ -552,12 +634,25 @@
                    
                     svgKNN.selectAll(".pin")
                         .data(predictData)
-                        .enter().append("circle", ".pin")
+                        .enter()
+                        .append("circle", ".pin")
                         .attr("r", 4)
                         .attr("transform", function(d,i) {
                               return "translate(" + projection([
                                 d[0],d[1]
                               ]) + ")";
+                        })
+                        .style("fill", function(d){
+                            if(d[2] == 'A'){
+                                return "rgba(136,193,0,1)";
+                            }
+                            if(d[2] == 'B'){
+                                return "rgba(250,190,40,0.8)";
+                            }
+                            if(d[2] == 'C'){
+                                return "rgba(255,0,60,0.3)";
+                            }
+                        
                         })
                         .on("mouseover", function(d,i) {		
                             div.transition()		
@@ -572,16 +667,107 @@
                                 .duration(500)		
                                 .style("opacity", 0);	
                         })
-                        .style("opacity", 0);
                  });
               //  })
                });
 
             </script>	    
         </div>
+    
+  <!--  <div id="ActualChinese">
+            <h2>Chinese restaurants used for KNN.</h2>
+            <script type="text/javascript">
+                // D3 code will go here
+
+                //Width and height
+                var w = 960;
+                var h = 960;
+
+                //Define global data
+                var activerat;
+                var procon;
+
+                //Define map projection
+                var projection = d3.geo.mercator()
+                            .center([-73.94, 40.70])
+                            .scale(75000)
+                            .translate([w/2, h/2]);
+
+                //Define path generator
+                var path = d3.geo.path()
+                             .projection(projection);
+                var div = d3.select("#ActualChinese").append("div")	
+                    .attr("class", "tooltip")				
+                    .style("opacity", 0);
+                //Create SVG element
+                var svgActual = d3.select("#ActualChinese")
+                            .append("svg")
+                            .attr("width", w)
+                            .attr("height", h);
+
+                //Load in rat inspection result data
+               d3.text('ActualChiRestaurantLocation.csv', function(error, _data){
+                   if (error) throw(error);
+                   var predictData = d3.csv.parseRows(_data);
+                    d3.json("Zipcode_TabulationArea.geojson", function(error,json) {
+                    if (error) throw(error);
+                        console.log(predictData);
+                  
+                    svgActual.selectAll("path")
+                       .data(json.features)
+                       .enter()
+                       .append("path")
+                       .attr("d", path)
+                       .style("fill", "#ccc");
+                   
+                    svgActual.selectAll(".pin")
+                        .data(predictData)
+                        .enter()
+                        .append("circle", ".pin")
+                        .attr("r", 4)
+                        .attr("transform", function(d,i) {
+                              return "translate(" + projection([
+                                d[0],d[1]
+                              ]) + ")";
+                        })
+                        .style("fill", function(d){
+                            if(d[2] == 'A'){
+                                return "rgba(136,193,0,1)";
+                            }
+                            if(d[2] == 'B'){
+                                return "rgba(250,190,40,0.8)";
+                            }
+                            if(d[2] == 'C'){
+                                return "rgba(255,0,60,0.3)";
+                            }
+                        
+                        })
+                        .on("mouseover", function(d,i) {		
+                            div.transition()		
+                                .duration(200)		
+                                .style("opacity", .9);		
+                            div.html( "<br/>Grade:"  + d[2] + d[0] + "," + d[1] )	
+                                .style("left", (d3.event.pageX) + "px")		
+                                .style("top", (d3.event.pageY - 28) + "px");	
+                        })					
+                        .on("mouseout", function(d) {		
+                            div.transition()		
+                                .duration(500)		
+                                .style("opacity", 0);	
+                        })
+                 });
+              //  })
+               });
+
+            </script>	    
+        </div>-->
         
     <div id="GaussianProcessRegressionChinese">
-            <h2>Hover the map with the mouse pointer to see the average violations per visit a Chinese restaurant at that location is most likely to get.</h2>
+            <h2>Machine Learning: AVPV regression</h2>
+        <p>The number of training data is 2120 which contains the latitude, longitude, and AVPV. Based on the these point, we create 64x128 grid to make a dense prediction
+
+The region with the most violation is at the south of Brox, and north of Queens borough. Which is consensus to the prediction result of grade C
+</p>
             <script type="text/javascript">
                 // D3 code will go here
 
